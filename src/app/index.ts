@@ -1,4 +1,6 @@
 const { App } = require("@slack/bolt");
+import { registerActions } from "./actions";
+import { registerEvents } from "./events";
 
 // Initialize app
 export const app = new App({
@@ -7,3 +9,6 @@ export const app = new App({
   socketMode: true,
   appToken: process.env.SLACK_APP_TOKEN,
 });
+
+registerActions();
+registerEvents();
