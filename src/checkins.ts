@@ -1,4 +1,4 @@
-import { app } from "../slack";
+import { app } from "app";
 
 export const sendCheckin = async (channel) => {
   await app.client.chat.postMessage({

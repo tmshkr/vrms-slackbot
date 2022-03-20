@@ -2,10 +2,10 @@
   "name": "vrms-slackbot",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/app.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node dist/app.js",
-    "dev": "nodemon src/app.ts",
+    "start": "NODE_PATH=dist node dist/index.js",
+    "dev": "NODE_PATH=src nodemon src/index.ts",
     "build": "tsc -p ."
   },
   "keywords": [],
