@@ -4,7 +4,8 @@ import { getHomeTab } from "./views/home";
 export const registerEvents = () => {
   app.event("app_home_opened", async ({ event, client, logger }) => {
     try {
-      const result = await client.views.publish(getHomeTab(event.user));
+      const home = await getHomeTab(event.user);
+      const result = await client.views.publish(home);
 
       logger.info(result);
     } catch (error) {

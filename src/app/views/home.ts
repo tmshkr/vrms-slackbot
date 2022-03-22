@@ -1,9 +1,35 @@
-import { projects } from "data/projects";
+import prisma from "lib/prisma";
 import { meetings } from "data/meetings";
 
-export const getHomeTab = (user_id) => {
+const renderProject = (project) => {
   return {
-    user_id,
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `:small_blue_diamond: ${project.name}`,
+    },
+  };
+};
+
+export const getHomeTab = async (slack_id) => {
+  // create user if does not exist in db
+  await prisma.user.upsert({
+    where: { slack_id },
+    update: {},
+    create: { slack_id },
+  });
+  const projectsData = await prisma.projects.findMany({
+    include: { recurring_meetings: true },
+    orderBy: {
+      id: "asc",
+    },
+  });
+
+  console.log(projectsData);
+  const projects = projectsData.map(renderProject);
+
+  return {
+    user_id: slack_id,
     view: {
       type: "home",
       blocks: [

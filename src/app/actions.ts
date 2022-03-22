@@ -20,7 +20,8 @@ export const registerActions = () => {
         text: ":small_blue_diamond: VRMS",
       },
     });
-    await client.views.publish(getHomeTab(body.user.id));
+    const home = await getHomeTab(body.user.id);
+    await client.views.publish(home);
     console.log(body);
   });
 
@@ -33,7 +34,8 @@ export const registerActions = () => {
         text: ":small_blue_diamond: *VRMS Team Meeting* – Monday, March 21",
       },
     });
-    await client.views.publish(getHomeTab(body.user.id));
+    const home = await getHomeTab(body.user.id);
+    await client.views.publish(home);
     console.log(body);
   });
 
