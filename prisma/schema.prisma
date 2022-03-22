@@ -11,30 +11,32 @@ datasource db {
 }
 
 model User {
-  slack_id   String       @id
-  projects   Projects[]
-  team_roles TeamMember[]
-  app_roles  AppRoles[]
+  slack_id            String               @id
+  app_roles           AppRole[]
+  created_meetings    Meeting[]
+  created_projects    Project[]
+  meeting_assignments MeetingParticipant[]
+  team_assignments    TeamMember[]
 }
 
-model Projects {
-  id                 Int                @id @default(autoincrement())
-  name               String
-  created_by         String
-  created_by_user    User               @relation(fields: [created_by], references: [slack_id])
-  slack_channel_id   String
-  team_roles         TeamMember[]
-  recurring_meetings RecurringMeeting[]
+model Project {
+  id               Int          @id @default(autoincrement())
+  created_by       String
+  created_by_user  User         @relation(fields: [created_by], references: [slack_id])
+  meetings         Meeting[]
+  name             String
+  slack_channel_id String
+  team_members     TeamMember[]
 }
 
 model TeamMember {
-  id         Int      @id @default(autoincrement())
-  slack_id   String
+  id         Int     @id @default(autoincrement())
+  is_active  Boolean @default(true)
+  project    Project @relation(fields: [project_id], references: [id])
   project_id Int
   role       String
-  is_active  Boolean
-  user       User     @relation(fields: [slack_id], references: [slack_id])
-  project    Projects @relation(fields: [project_id], references: [id])
+  slack_id   String
+  user       User    @relation(fields: [slack_id], references: [slack_id])
 
   @@unique([slack_id, project_id])
 }
@@ -44,22 +46,36 @@ enum Role {
   FACILITATOR
 }
 
-model AppRoles {
+model AppRole {
   id       Int    @id @default(autoincrement())
+  role     Role
   slack_id String
   user     User   @relation(fields: [slack_id], references: [slack_id])
-  role     Role
 
   @@unique([slack_id, role])
 }
 
-model RecurringMeeting {
-  id         Int      @id @default(autoincrement())
-  project_id Int
-  date       DateTime
-  time       String
-  duration   Int
-  title      String
-  is_active  Boolean
-  project    Projects @relation(fields: [project_id], references: [id])
+model Meeting {
+  id              Int                  @id @default(autoincrement())
+  created_by      String
+  created_by_user User                 @relation(fields: [created_by], references: [slack_id])
+  is_active       Boolean              @default(true)
+  participants    MeetingParticipant[]
+  project         Project              @relation(fields: [project_id], references: [id])
+  project_id      Int
+  start_date      DateTime
+  title           String
+  week_frequency  Int
+}
+
+model MeetingParticipant {
+  id         Int     @id @default(autoincrement())
+  is_active  Boolean @default(true)
+  meeting    Meeting @relation(fields: [meeting_id], references: [id])
+  meeting_id Int
+  role       String
+  slack_id   String
+  user       User    @relation(fields: [slack_id], references: [slack_id])
+
+  @@unique([meeting_id, slack_id])
 }

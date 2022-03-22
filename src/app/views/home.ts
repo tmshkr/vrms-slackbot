@@ -18,8 +18,8 @@ export const getHomeTab = async (slack_id) => {
     update: {},
     create: { slack_id },
   });
-  const projectsData = await prisma.projects.findMany({
-    include: { recurring_meetings: true },
+  const projectsData = await prisma.project.findMany({
+    include: { meetings: true },
     orderBy: {
       id: "asc",
     },
