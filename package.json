@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_PATH=dist node dist/index.js",
     "dev": "NODE_PATH=src nodemon src/index.ts",
-    "build": "tsc -p ."
+    "build": "rm -rf dist && tsc -p ."
   },
   "keywords": [],
   "author": "",
