@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  slack_id   String       @id
+  projects   Projects[]
+  team_roles TeamMember[]
+  app_roles  AppRoles[]
+}
+
+model Projects {
+  id                 Int                @id @default(autoincrement())
+  name               String
+  created_by         String
+  created_by_user    User               @relation(fields: [created_by], references: [slack_id])
+  slack_channel_id   String
+  team_roles         TeamMember[]
+  recurring_meetings RecurringMeeting[]
+}
+
+model TeamMember {
+  id         Int      @id @default(autoincrement())
+  slack_id   String
+  project_id Int
+  role       String
+  is_active  Boolean
+  user       User     @relation(fields: [slack_id], references: [slack_id])
+  project    Projects @relation(fields: [project_id], references: [id])
+
+  @@unique([slack_id, project_id])
+}
+
+enum Role {
+  ADMIN
+  FACILITATOR
+}
+
+model AppRoles {
+  id       Int    @id @default(autoincrement())
+  slack_id String
+  user     User   @relation(fields: [slack_id], references: [slack_id])
+  role     Role
+
+  @@unique([slack_id, role])
+}
+
+model RecurringMeeting {
+  id         Int      @id @default(autoincrement())
+  project_id Int
+  date       DateTime
+  time       String
+  duration   Int
+  title      String
+  is_active  Boolean
+  project    Projects @relation(fields: [project_id], references: [id])
+}
