@@ -18,15 +18,15 @@ export const getHomeTab = async (slack_id) => {
     update: {},
     create: { slack_id },
   });
-  const projectsData = await prisma.project.findMany({
-    include: { meetings: true },
-    orderBy: {
-      id: "asc",
-    },
-  });
 
-  console.log(projectsData);
-  const projects = projectsData.map(renderProject);
+  const projects = await prisma.user
+    .findUnique({
+      where: { slack_id },
+      include: { created_projects: { orderBy: { id: "asc" } } },
+    })
+    .then((user) => user.created_projects?.map(renderProject));
+
+  console.log(projects);
 
   return {
     user_id: slack_id,
