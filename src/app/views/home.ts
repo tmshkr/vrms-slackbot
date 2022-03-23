@@ -45,7 +45,6 @@ export const getHomeTab = async (slack_id) => {
     })
     .then((user) => {
       const userOverview = {} as any;
-      console.log(user);
       userOverview.projects = user.team_assignments?.map(({ project }) =>
         renderProject(project)
       );
@@ -54,8 +53,6 @@ export const getHomeTab = async (slack_id) => {
       );
       return userOverview;
     });
-
-  // console.log(projects);
 
   return {
     user_id: slack_id,
