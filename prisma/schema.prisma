@@ -62,6 +62,7 @@ model TeamMember {
 
 model Meeting {
   id               Int                  @id @default(autoincrement())
+  agenda_job_id    String
   created_by       String
   created_by_user  User                 @relation(fields: [created_by], references: [slack_id])
   is_active        Boolean              @default(true)
@@ -69,9 +70,7 @@ model Meeting {
   project          Project              @relation(fields: [project_id], references: [id])
   project_id       Int
   slack_channel_id String
-  start_date       DateTime
   title            String
-  week_frequency   Int
 }
 
 model MeetingParticipant {
