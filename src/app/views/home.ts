@@ -1,5 +1,4 @@
 import prisma from "lib/prisma";
-import { meetings } from "data/meetings";
 
 const renderProject = (project) => {
   return {
@@ -7,6 +6,16 @@ const renderProject = (project) => {
     text: {
       type: "mrkdwn",
       text: `:small_blue_diamond: ${project.name}`,
+    },
+  };
+};
+
+const renderMeeting = (meeting) => {
+  return {
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `:small_blue_diamond: *${meeting.title}* – ${meeting.start_date}`,
     },
   };
 };
@@ -19,14 +28,34 @@ export const getHomeTab = async (slack_id) => {
     create: { slack_id },
   });
 
-  const projects = await prisma.user
+  const userOverview = await prisma.user
     .findUnique({
       where: { slack_id },
-      include: { created_projects: { orderBy: { id: "asc" } } },
+      include: {
+        team_assignments: {
+          orderBy: { id: "asc" },
+          include: { project: true },
+        },
+        meeting_assignments: {
+          include: {
+            meeting: true,
+          },
+        },
+      },
     })
-    .then((user) => user.created_projects?.map(renderProject));
+    .then((user) => {
+      const userOverview = {} as any;
+      console.log(user);
+      userOverview.projects = user.team_assignments?.map(({ project }) =>
+        renderProject(project)
+      );
+      userOverview.meetings = user.meeting_assignments?.map(({ meeting }) =>
+        renderMeeting(meeting)
+      );
+      return userOverview;
+    });
 
-  console.log(projects);
+  // console.log(projects);
 
   return {
     user_id: slack_id,
@@ -76,7 +105,7 @@ export const getHomeTab = async (slack_id) => {
             action_id: "create_new_project",
           },
         },
-        ...projects,
+        ...userOverview.projects,
         {
           type: "divider",
         },
@@ -105,7 +134,7 @@ export const getHomeTab = async (slack_id) => {
             action_id: "create_new_meeting",
           },
         },
-        ...meetings,
+        ...userOverview.meetings,
       ],
     },
   };
