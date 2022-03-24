@@ -64,7 +64,11 @@ export const registerViewListeners = () => {
         },
       });
 
-      scheduleMeetingCheckin(start_date, newMeeting.id);
+      scheduleMeetingCheckin(
+        start_date,
+        newMeeting.id,
+        meeting_channel_select.selected_channel
+      );
 
       const home = await getHomeTab(body.user.id);
       await client.views.publish(home);
