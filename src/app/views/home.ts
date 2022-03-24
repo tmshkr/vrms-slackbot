@@ -1,4 +1,5 @@
 import prisma from "lib/prisma";
+import moment from "lib/moment";
 
 const renderProject = (project) => {
   return {
@@ -15,7 +16,12 @@ const renderMeeting = (meeting) => {
     type: "section",
     text: {
       type: "mrkdwn",
-      text: `:small_blue_diamond: *${meeting.title}* – ${meeting.start_date}`,
+      text: `:small_blue_diamond: *${meeting.title}* – ${moment(
+        meeting.next_run
+      ).format(
+        "dddd, MMMM Do, h:mm a"
+      )} – <https://www.google.com|Add to Calendar>`,
+      // TODO: use Google Calendar API to create event with link to meeting
     },
   };
 };

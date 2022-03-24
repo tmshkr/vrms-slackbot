@@ -63,6 +63,7 @@ export const createMeetingModal = (userProjects) => ({
         emoji: true,
       },
     },
+    // TODO: make it so user can't select a date in the past
     {
       type: "input",
       block_id: "meeting_datepicker_select_block",
