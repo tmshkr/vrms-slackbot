@@ -1,16 +1,13 @@
 import { app } from "app";
 import { getBlocks } from "utils/getBlocks";
 
-export const registerMessages = () => {
-  app.message("hi", async ({ message, client, logger }) => {
-    if (message.channel_type !== "im") {
-      return;
-    }
-
+export const registerCommands = () => {
+  app.command("/onboard", async ({ ack, body, client, logger }) => {
+    await ack();
     try {
       const reply: any = await getBlocks("onboarding/0-welcome.md");
       await client.chat.postMessage({
-        channel: message.channel,
+        channel: body.user_id,
         text: reply.text,
         blocks: reply.blocks,
       });
@@ -18,4 +15,6 @@ export const registerMessages = () => {
       logger.error(error);
     }
   });
+
+  console.log("⚡️ Commands registered!");
 };

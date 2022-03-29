@@ -2,7 +2,7 @@ const { App } = require("@slack/bolt");
 import { registerActions } from "./actions";
 import { registerEvents } from "./events";
 import { registerViewListeners } from "./views/listeners";
-import { registerMessages } from "./message";
+import { registerCommands } from "./commands";
 
 // Initialize app
 export const app = new App({
@@ -15,4 +15,4 @@ export const app = new App({
 registerActions();
 registerEvents();
 registerViewListeners();
-registerMessages();
+registerCommands();
