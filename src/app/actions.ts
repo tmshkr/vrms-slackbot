@@ -1,5 +1,6 @@
 import { app } from "app";
 import prisma from "lib/prisma";
+import { getMongoClient } from "lib/mongo";
 
 import { createMeetingModal } from "app/views/modals/createMeetingModal";
 
@@ -97,6 +98,16 @@ export const registerActions = () => {
   app.action("role_select", async ({ body, client, ack, logger }) => {
     await ack();
     const selectedRole = body.actions[0].selected_option.value;
+    const mongoClient = await getMongoClient();
+    mongoClient
+      .db()
+      .collection("onboarding")
+      .updateOne(
+        { _id: body.user.id },
+        { $set: { selectedRole } },
+        { upsert: true }
+      );
+
     switch (selectedRole) {
       case "role_data":
         console.log("user selected role_data");
