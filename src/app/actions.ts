@@ -94,5 +94,26 @@ export const registerActions = () => {
     }
   );
 
+  app.action("role_select", async ({ body, client, ack, logger }) => {
+    await ack();
+    const selectedRole = body.actions[0].selected_option.value;
+    switch (selectedRole) {
+      case "role_data":
+        console.log("user selected role_data");
+        break;
+      case "role_engineering":
+        console.log("user selected role_engineering");
+        break;
+      case "role_product":
+        console.log("user selected role_product");
+        break;
+      case "role_ux":
+        console.log("user selected role_ux");
+        break;
+      default:
+        break;
+    }
+  });
+
   console.log("⚡️ Actions registered!");
 };
