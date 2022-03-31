@@ -12,16 +12,26 @@ const renderProject = (project) => {
 };
 
 const renderMeeting = (meeting) => {
+  const startTime = moment(meeting.next_run).utc();
+  const formatString = "YYYYMMDDTHHmmss[Z]";
+  const url = new URL("https://calendar.google.com/calendar/render");
+  url.searchParams.set("action", "TEMPLATE");
+  url.searchParams.set("text", meeting.title);
+  url.searchParams.set(
+    "dates",
+    `${startTime.format(formatString)}/${startTime
+      .add(1, "hour")
+      .format(formatString)}`
+  );
+  url.searchParams.set("details", "meeting details");
+
   return {
     type: "section",
     text: {
       type: "mrkdwn",
       text: `:small_blue_diamond: *${meeting.title}* – ${moment(
         meeting.next_run
-      ).format(
-        "dddd, MMMM Do, h:mm a"
-      )} – <https://www.google.com|Add to Calendar>`,
-      // TODO: use Google Calendar API to create event with link to meeting
+      ).format("dddd, MMMM Do, h:mm a")} – <${url}|Add to Calendar>`,
     },
   };
 };
