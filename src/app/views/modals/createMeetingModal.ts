@@ -151,9 +151,9 @@ export const createMeetingModal = (userProjects) => ({
           {
             text: {
               type: "plain_text",
-              text: "once a month",
+              text: "no repeat",
             },
-            value: "1 month",
+            value: "no repeat",
           },
         ],
         action_id: "meeting_frequency",
