@@ -88,13 +88,6 @@ export const registerActions = () => {
     }
   });
 
-  app.action(
-    "meeting_channel_select",
-    async ({ body, client, ack, logger }) => {
-      await ack();
-    }
-  );
-
   app.action("role_select", async ({ body, client, ack, logger }) => {
     await ack();
     const selectedRole = body.actions[0].selected_option.value;
