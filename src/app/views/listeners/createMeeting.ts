@@ -1,5 +1,6 @@
 import prisma from "lib/prisma";
-import moment from "lib/moment";
+import { RRule } from "rrule";
+import dayjs from "lib/dayjs";
 import { scheduleMeetingCheckin } from "lib/schedule";
 import { getHomeTab } from "app/views/home";
 
@@ -26,18 +27,45 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
     meeting_frequency,
   } = values;
 
-  const start_date = moment(
+  const start_date = dayjs(
     `${meeting_datepicker.selected_date} ${meeting_timepicker.selected_time}`
-  ).format();
+  );
+
+  let rule;
+  switch (meeting_frequency.selected_option.value) {
+    case "1 week":
+      rule = new RRule({
+        freq: RRule.WEEKLY,
+        interval: 1,
+        dtstart: new Date(start_date.format()),
+        tzid: "America/Los_Angeles",
+      });
+      break;
+    case "2 weeks":
+      rule = new RRule({
+        freq: RRule.WEEKLY,
+        interval: 2,
+        dtstart: new Date(start_date.format()),
+        tzid: "America/Los_Angeles",
+      });
+      break;
+
+    default:
+      break;
+  }
+
+  const duration = Number(meeting_duration.selected_option.value.split(" ")[0]);
 
   const newMeeting = await prisma.meeting.create({
     data: {
       created_by: body.user.id,
-      next_run: start_date,
+      duration,
+      next_run: start_date.format(),
       project_id: Number(meeting_project.selected_option.value),
       slack_channel_id: meeting_channel.selected_channel,
-      start_date,
+      start_date: start_date.format(),
       title: meeting_title.value,
+      rrule: rule?.toString(),
       participants: {
         create: {
           slack_id: body.user.id,
