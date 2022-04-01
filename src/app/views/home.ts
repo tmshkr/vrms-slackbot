@@ -20,10 +20,12 @@ const renderMeeting = (meeting) => {
   url.searchParams.set(
     "dates",
     `${startTime.format(formatString)}/${startTime
-      .add(1, "hour")
+      .add(meeting.duration, "minutes")
       .format(formatString)}`
   );
   url.searchParams.set("details", "meeting details");
+  meeting.rrule && url.searchParams.set("recur", meeting.rrule.split("\n")[1]);
+  url.searchParams.set("ctz", "America/Los_Angeles");
 
   return {
     type: "section",
