@@ -64,12 +64,14 @@ model Meeting {
   id               Int                  @id @default(autoincrement())
   created_by       String
   created_by_user  User                 @relation(fields: [created_by], references: [slack_id])
+  duration         Int // in minutes
   is_active        Boolean              @default(true)
   last_run         DateTime?
   next_run         DateTime
   participants     MeetingParticipant[]
   project          Project              @relation(fields: [project_id], references: [id])
   project_id       Int
+  rrule            String?
   slack_channel_id String
   start_date       DateTime
   title            String
