@@ -3,9 +3,12 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 import { app } from "app";
+import { getAgenda } from "lib/agenda";
 
 (async () => {
   await app.start(process.env.PORT || 3000);
   console.log("⚡️ Bolt app is running!");
-  // TODO: schedule upcoming meetings as jobs with node-schedule
+  const agenda = await getAgenda();
+  agenda.start();
+  console.log("Agenda started");
 })();
