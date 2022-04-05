@@ -27,7 +27,7 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
     meeting_frequency,
   } = values;
 
-  const start_date = dayjs(
+  const start_date = dayjs.tz(
     `${meeting_datepicker.selected_date} ${meeting_timepicker.selected_time}`
   );
 
@@ -53,6 +53,8 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
     default:
       break;
   }
+
+  console.log(start_date);
 
 
   const newMeeting = await prisma.meeting.create({
