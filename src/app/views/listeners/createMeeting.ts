@@ -1,5 +1,6 @@
 import prisma from "lib/prisma";
 import { RRule } from "rrule";
+import { getFakeUTC } from "lib/rrule";
 import dayjs from "lib/dayjs";
 import { scheduleMeetingCheckin } from "lib/schedule";
 import { getHomeTab } from "app/views/home";
@@ -37,7 +38,7 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
       rule = new RRule({
         freq: RRule.WEEKLY,
         interval: 1,
-        dtstart: new Date(start_date.format()),
+        dtstart: new Date(getFakeUTC(start_date)),
         tzid: "America/Los_Angeles",
       });
       break;
@@ -45,7 +46,7 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
       rule = new RRule({
         freq: RRule.WEEKLY,
         interval: 2,
-        dtstart: new Date(start_date.format()),
+        dtstart: new Date(getFakeUTC(start_date)),
         tzid: "America/Los_Angeles",
       });
       break;
@@ -53,9 +54,6 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
     default:
       break;
   }
-
-  console.log(start_date);
-
 
   const newMeeting = await prisma.meeting.create({
     data: {
@@ -76,9 +74,10 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
   });
 
   scheduleMeetingCheckin(
-    start_date,
+    start_date.utc().format(),
     newMeeting.id,
-    meeting_channel.selected_channel
+    meeting_channel.selected_channel,
+    rule?.toString()
   );
 
   const home = await getHomeTab(body.user.id);
