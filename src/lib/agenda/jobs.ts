@@ -6,8 +6,8 @@ export function registerJobs(agenda) {
     const { rrule, slack_channel_id } = job.attrs.data;
     await sendMeetingCheckin(slack_channel_id);
     if (rrule) {
-      const next_run = getNextOccurrence(rrule);
-      job.schedule(next_run);
+      const nextRunAt = getNextOccurrence(rrule);
+      job.schedule(nextRunAt);
       await job.save();
     }
   });
