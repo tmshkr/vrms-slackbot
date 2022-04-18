@@ -2,7 +2,7 @@ import prisma from "lib/prisma";
 import { RRule } from "rrule";
 import { getFakeUTC } from "lib/rrule";
 import dayjs from "lib/dayjs";
-import { scheduleMeetingCheckin } from "lib/schedule";
+import { getAgenda } from "lib/agenda";
 import { getHomeTab } from "app/views/home";
 
 function getValuesFromObject(obj) {
@@ -59,7 +59,6 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
     data: {
       created_by: body.user.id,
       duration: Number(meeting_duration.selected_option.value.split(" ")[0]),
-      next_run: start_date.utc().format(),
       project_id: Number(meeting_project.selected_option.value),
       slack_channel_id: meeting_channel.selected_channel,
       start_date: start_date.utc().format(),
@@ -73,12 +72,13 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
     },
   });
 
-  scheduleMeetingCheckin(
-    start_date.utc().format(),
-    newMeeting.id,
-    meeting_channel.selected_channel,
-    rule?.toString()
-  );
+  const agenda = await getAgenda();
+  await agenda.schedule(start_date.utc().format(), "sendMeetingCheckin", {
+    start_date: start_date.utc().format(),
+    meeting_id: newMeeting.id,
+    slack_channel_id: meeting_channel.selected_channel,
+    rrule: rule?.toString(),
+  });
 
   const home = await getHomeTab(body.user.id);
   await client.views.publish(home);
