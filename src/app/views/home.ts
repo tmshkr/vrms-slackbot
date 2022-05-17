@@ -23,8 +23,7 @@ const renderMeeting = (meeting) => {
   url.searchParams.set("text", meeting.title);
   url.searchParams.set(
     "dates",
-    `${dayjs(nextMeeting).utc().format(formatString)}/${dayjs(nextMeeting)
-      .utc()
+    `${dayjs(nextMeeting).format(formatString)}/${dayjs(nextMeeting)
       .add(meeting.duration, "minutes")
       .format(formatString)}`
   );
