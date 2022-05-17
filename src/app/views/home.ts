@@ -1,5 +1,5 @@
 import prisma from "lib/prisma";
-import moment from "lib/moment";
+import dayjs from "lib/dayjs";
 import { getNextOccurrence } from "lib/rrule";
 
 const renderProject = (project) => {
@@ -23,7 +23,7 @@ const renderMeeting = (meeting) => {
   url.searchParams.set("text", meeting.title);
   url.searchParams.set(
     "dates",
-    `${moment(nextMeeting).utc().format(formatString)}/${moment(nextMeeting)
+    `${dayjs(nextMeeting).utc().format(formatString)}/${dayjs(nextMeeting)
       .utc()
       .add(meeting.duration, "minutes")
       .format(formatString)}`
@@ -36,9 +36,9 @@ const renderMeeting = (meeting) => {
     type: "section",
     text: {
       type: "mrkdwn",
-      text: `:small_blue_diamond: *${meeting.title}* – ${moment(
+      text: `:small_blue_diamond: *${meeting.title}* – ${dayjs(
         nextMeeting
-      ).format("dddd, MMMM Do, h:mm a")} – <${url}|Add to Calendar>`,
+      ).format("dddd, MMMM D, h:mm a")} – <${url}|Add to Calendar>`,
     },
   };
 };
