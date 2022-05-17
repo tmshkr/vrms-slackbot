@@ -20,6 +20,10 @@ export function getNextOccurrence(rrule: string): string {
     (date, i) => i === 0
   );
 
+  console.log("***************");
+  console.log({ rule });
+  console.log({ nextOccurrence });
+
   // adds the correct timezone offset to the fake UTC date
   return dayjs
     .tz(nextOccurrence.toISOString().slice(0, -1), rule.options.tzid)
