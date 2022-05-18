@@ -9,24 +9,16 @@ export function getFakeUTC(date: dayjs.Dayjs): string {
   return date.format().slice(0, -6) + "Z";
 }
 
-export function getNextOccurrence(rrule: string): string {
+export function getNextOccurrence(rrule: string): Date {
   const rule = rrulestr(rrule);
   const maxDate = new Date(8640000000000000);
 
   const [nextOccurrence] = rule.between(
-    new Date(getFakeUTC(dayjs())),
+    new Date(),
     maxDate,
     false,
     (date, i) => i === 0
   );
 
-  console.log("***************");
-  console.log({ rule });
-  console.log({ nextOccurrence });
-
-  // adds the correct timezone offset to the fake UTC date
-  return dayjs
-    .tz(nextOccurrence.toISOString().slice(0, -1), rule.options.tzid)
-    .utc()
-    .format();
+  return nextOccurrence;
 }

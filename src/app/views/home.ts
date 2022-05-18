@@ -35,9 +35,9 @@ const renderMeeting = (meeting) => {
     type: "section",
     text: {
       type: "mrkdwn",
-      text: `:small_blue_diamond: *${meeting.title}* – ${dayjs(
-        nextMeeting
-      ).format("dddd, MMMM D, h:mm a")} – <${url}|Add to Calendar>`,
+      text: `:small_blue_diamond: *${meeting.title}* – ${dayjs
+        .tz(nextMeeting)
+        .format("dddd, MMMM D, h:mm a")} – <${url}|Add to Calendar>`,
     },
   };
 };
