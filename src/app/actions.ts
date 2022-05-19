@@ -83,7 +83,7 @@ export const registerActions = () => {
     } else {
       await client.views.open({
         trigger_id: body.trigger_id,
-        view: createMeetingModal(userProjects),
+        view: createMeetingModal(userProjects, body.user.id),
       });
     }
   });

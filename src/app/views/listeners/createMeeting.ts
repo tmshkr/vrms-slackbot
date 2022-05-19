@@ -21,6 +21,7 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
   const {
     meeting_title,
     meeting_project,
+    meeting_participants,
     meeting_channel,
     meeting_datepicker,
     meeting_timepicker,
@@ -65,9 +66,9 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
       title: meeting_title.value,
       rrule: rule?.toString(),
       participants: {
-        create: {
-          slack_id: body.user.id,
-        },
+        create: meeting_participants.selected_conversations.map((slack_id) => ({
+          slack_id,
+        })),
       },
     },
   });

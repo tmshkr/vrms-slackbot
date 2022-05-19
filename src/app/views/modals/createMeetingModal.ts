@@ -1,4 +1,4 @@
-export const createMeetingModal = (userProjects) => ({
+export const createMeetingModal = (userProjects, slack_id) => ({
   type: "modal",
   // View identifier
   callback_id: "create_meeting_modal",
@@ -39,6 +39,28 @@ export const createMeetingModal = (userProjects) => ({
       label: {
         type: "plain_text",
         text: "Which project is this meeting for?",
+      },
+    },
+    {
+      type: "input",
+      element: {
+        type: "multi_conversations_select",
+        placeholder: {
+          type: "plain_text",
+          text: "Select users",
+          emoji: true,
+        },
+        action_id: "meeting_participants",
+        initial_conversations: [slack_id],
+        filter: {
+          include: ["im"],
+          exclude_bot_users: true,
+        },
+      },
+      label: {
+        type: "plain_text",
+        text: "Who should be in this meeting?",
+        emoji: true,
       },
     },
     {
