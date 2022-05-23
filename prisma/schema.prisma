@@ -53,7 +53,7 @@ model TeamMember {
   is_active  Boolean     @default(true)
   project    Project     @relation(fields: [project_id], references: [id])
   project_id Int
-  role       ProjectRole
+  role       ProjectRole @default(MEMBER)
   slack_id   String
   user       User        @relation(fields: [slack_id], references: [slack_id])
 

@@ -4,23 +4,16 @@ import { getFakeUTC } from "lib/rrule";
 import dayjs from "lib/dayjs";
 import { getAgenda } from "lib/agenda";
 import { getHomeTab } from "app/views/home";
-
-function getValuesFromObject(obj) {
-  const values = {} as any;
-  for (const key in obj) {
-    const [innerKey] = Object.keys(obj[key]);
-    values[innerKey] = obj[key][innerKey];
-  }
-  return values;
-}
+import { getInnerValues } from "utils/getInnerValues";
 
 export const createMeeting = async ({ ack, body, view, client, logger }) => {
   await ack();
-  const values = getValuesFromObject(view.state.values);
+  const values = getInnerValues(view.state.values);
   console.log(values);
   const {
     meeting_title,
     meeting_project,
+    meeting_participants,
     meeting_channel,
     meeting_datepicker,
     meeting_timepicker,
@@ -65,9 +58,9 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
       title: meeting_title.value,
       rrule: rule?.toString(),
       participants: {
-        create: {
-          slack_id: body.user.id,
-        },
+        create: meeting_participants.selected_conversations.map((slack_id) => ({
+          slack_id,
+        })),
       },
     },
   });
@@ -79,6 +72,22 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
     slack_channel_id: meeting_channel.selected_channel,
     rrule: rule?.toString(),
   });
+
+  for (const slack_id of meeting_participants.selected_conversations) {
+    await client.chat.postMessage({
+      channel: slack_id,
+      text: `<@${body.user.id}> invited you to a meeting!`,
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `<@${body.user.id}> invited you to a meeting!`,
+          },
+        },
+      ],
+    });
+  }
 
   const home = await getHomeTab(body.user.id);
   await client.views.publish(home);
