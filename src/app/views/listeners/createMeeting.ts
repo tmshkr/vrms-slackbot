@@ -81,6 +81,23 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
     rrule: rule?.toString(),
   });
 
+  for (const slack_id of meeting_participants.selected_conversations) {
+    await client.chat.postMessage({
+      channel: slack_id,
+      text: `<@${body.user.id}> invited you to a meeting!`,
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `<@${body.user.id}> invited you to a meeting!`,
+          },
+        },
+      ],
+    });
+    console.log(`${slack_id} notified`);
+  }
+
   const home = await getHomeTab(body.user.id);
   await client.views.publish(home);
 };
