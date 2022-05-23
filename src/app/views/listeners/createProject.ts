@@ -33,4 +33,20 @@ export const createProject = async ({ ack, body, view, client, logger }) => {
 
   const home = await getHomeTab(body.user.id);
   await client.views.publish(home);
+
+  for (const slack_id of team_members.selected_conversations) {
+    await client.chat.postMessage({
+      channel: slack_id,
+      text: `<@${body.user.id}> has added you to the ${new_project_title.value} team!`,
+      blocks: [
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: `<@${body.user.id}> has added you to the *${new_project_title.value}* team!`,
+          },
+        },
+      ],
+    });
+  }
 };
