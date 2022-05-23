@@ -4,19 +4,11 @@ import { getFakeUTC } from "lib/rrule";
 import dayjs from "lib/dayjs";
 import { getAgenda } from "lib/agenda";
 import { getHomeTab } from "app/views/home";
-
-function getValuesFromObject(obj) {
-  const values = {} as any;
-  for (const key in obj) {
-    const [innerKey] = Object.keys(obj[key]);
-    values[innerKey] = obj[key][innerKey];
-  }
-  return values;
-}
+import { getInnerValues } from "utils/getInnerValues";
 
 export const createMeeting = async ({ ack, body, view, client, logger }) => {
   await ack();
-  const values = getValuesFromObject(view.state.values);
+  const values = getInnerValues(view.state.values);
   console.log(values);
   const {
     meeting_title,
