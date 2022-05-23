@@ -87,7 +87,6 @@ export const createMeeting = async ({ ack, body, view, client, logger }) => {
         },
       ],
     });
-    console.log(`${slack_id} notified`);
   }
 
   const home = await getHomeTab(body.user.id);
